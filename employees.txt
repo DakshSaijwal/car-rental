@@ -1,0 +1,6 @@
+E2 Harshit harshit149209 Employee -10 48000 0 -1 
+E3 Aditi aditi2299 Employee 20 0 0 -1 
+E4 Naman Na897999 Employee 100 76010 0 -1 
+E5 Georgia HeilHitler1 Employee -30 0 0 -1 
+E6 Rohan ro563gqd Employee 400 0 0 -1 
+E7 Raymen B999ioqhd Employee -60 0 0 -1 
