@@ -5,17 +5,17 @@
 #include <string>
 #include <algorithm>
 
-using namespace std;
+const std::string AVAILABLE_OWNER = "M";
 class Car {
-private: 
+private:
     int id;
-    string make;
-    string model;
-    string color;
-    string Condition;
+    std::string make;
+    std::string model;
+    std::string color;
+    std::string Condition;
     
 public:
-    string ownerId;
+    std::string ownerId;
     int year;
     static int nextId;
     float dailyRate;
@@ -24,71 +24,68 @@ public:
     Car()
         : id(-1), ownerId(""), year(0), dailyRate(0.0), dueDate(0){}
 
-    Car(const string& make, const string& model, const string& color,
-        const string& Condition, int year, double dailyRate){
+    Car(const std::string& make, const std::string& model, const std::string& color,
+        const std::string& Condition, int year, double dailyRate){
         id = nextId++;
         this->make = make;
         this->model = model;
         this->color = color;
         this->Condition = Condition;
-        this->ownerId = "M";
+        this->ownerId = AVAILABLE_OWNER;
         this->year = year;
         this->dailyRate = dailyRate;
-        this->dueDate = 00000000;
+        this->dueDate = 0;
         }
 
     void display() const {
-        cout << "ID: " << id << ", Make: " << make << ", Model: " << model
+        std::cout << "ID: " << id << ", Make: " << make << ", Model: " << model
              << ", Color: " << color << ", Condition: " << Condition << ", Owner ID: "
-             << ownerId << ", Year: " << year << ", Daily Rate: $" << fixed
-             << setprecision(2) << dailyRate << ", Due Date: " << dueDate
-             << endl;
+             << ownerId << ", Year: " << year << ", Daily Rate: $" << std::fixed
+             << std::setprecision(2) << dailyRate << ", Due Date: " << dueDate
+             << std::endl;
     }
-    void RentRequest(string id,int duedate){
+    void RentRequest(const std::string& id, int duedate){
         ownerId=id;
         dueDate=duedate;
     }
     int getId() const {
         return id;
     }
+    const std::string& getMake() const { return make; }
+    const std::string& getModel() const { return model; }
     void setDueDate(int date){
         dueDate=date;
     }
-    int getDueDate(){
+    int getDueDate() const {
         return dueDate;
     }
-    bool isAvailable(int date) {
-        if (ownerId == "M" || dueDate < date) {
-            return true;
-        } 
-        else {
-            return false;
-        }
+    bool isAvailable(int date) const {
+        return (ownerId == AVAILABLE_OWNER || dueDate < date);
     }
-    friend ostream& operator<<(ostream& out, const Car& car);
-    friend istream& operator>>(istream& in, Car& car);
+    friend std::ostream& operator<<(std::ostream& out, const Car& car);
+    friend std::istream& operator>>(std::istream& in, Car& car);
 };
 int Car::nextId = 0; // Initialize the static variable
-ostream& operator<<(ostream& out, const Car& car) {
+std::ostream& operator<<(std::ostream& out, const Car& car) {
     out << car.id << ' ' << car.make << ' ' << car.model << ' ' << car.color
         << ' ' << car.Condition << ' ' << car.ownerId << ' ' << car.year << ' '
         << car.dailyRate << ' ' << car.dueDate << ' ' << '\n';
     return out;
 }
-istream& operator>>(istream& in, Car& car) {
+std::istream& operator>>(std::istream& in, Car& car) {
     in >> car.id >> car.make >> car.model >> car.color >> car.Condition >>
         car.ownerId >> car.year >> car.dailyRate >> car.dueDate;
     return in;
 }
-vector<Car> cars;
+std::vector<Car> cars;
 void updateCar(Car car);
 Car getCar(int id){
-    if (cars.size()==0){
-        cout<<"No cars found.\n";
+    if (cars.empty()){
+        std::cout<<"No cars found.\n";
         Car car;
         return car;
     }
-    for (auto i:cars){
+    for (const auto& i:cars){
         if (i.getId()==id){
             return i;
         }
@@ -98,53 +95,53 @@ Car getCar(int id){
 }
 class User {
 protected:
-string id;
-string name;
-string password;
+std::string id;
+std::string name;
+std::string password;
 public:
-    string position;
+    std::string position;
     int record;
     int Payable;
     int numberofCars; 
-    vector<int> cars;
-    void display() {
-        cout << "ID: " << id << ", Name: " << name << ", Position: " << position
-             << ", Record: " << record << ", Payable: " << Payable << ", Car Count: " << numberofCars << endl<<"Cars: ";
-        if (numberofCars>0) for (auto& car : cars) {
-            if (car!=-1) cout<<car<<" ";
+    std::vector<int> cars;
+    void display() const {
+        std::cout << "ID: " << id << ", Name: " << name << ", Position: " << position
+             << ", Record: " << record << ", Payable: " << Payable << ", Car Count: " << numberofCars << std::endl<<"Cars: ";
+        if (numberofCars>0) for (const auto& car : cars) {
+            if (car!=-1) std::cout<<car<<" ";
         }
-        cout<<endl;
+        std::cout<<std::endl;
     }
-    string getId() const {
+    const std::string& getId() const {
         return id;
     }
-    void setpass (string pass){
+    void setpass (const std::string& pass){
         password=pass;
     }
     void clear_due(){
         Payable=0;
     }
-    bool checkpass(string pass){
+    bool checkpass(const std::string& pass) const {
         return pass==password;
     }
-    void setname (string name){
+    void setname (const std::string& name){
         this->name=name;
     }
-    string getpass(){
+    const std::string& getpass() const {
         return password;
     }
-    string getname(){
+    const std::string& getname() const {
         return name;
     }
     void addCar(int carId) {
         cars.insert(cars.begin(), carId);
         numberofCars++;
     }
-    void showcars(){
-        if (cars.size()==0){
-            cout<<"You don't own a car.\n";
+    void showcars() const {
+        if (cars.empty()){
+            std::cout<<"You don't own a car.\n";
         }
-        for (auto i:cars){
+        for (const auto& i:cars){
             if (i!=-1){
                 Car car=getCar(i);
                 car.display();
@@ -161,14 +158,14 @@ public:
         }
     }   
 };
-class employee: public User{
+class Employee: public User{
     public:
     static int employeeNextId;
-    employee(const string& namenew, const string& passwordnew){
+    Employee(const std::string& namenew, const std::string& passwordnew){
         name=namenew;
         password=passwordnew;
         position="Employee";
-        id="E"+to_string(employeeNextId++);
+        id="E"+std::to_string(employeeNextId++);
         if (namenew==""||passwordnew==""){
             employeeNextId--;
         }
@@ -177,55 +174,55 @@ class employee: public User{
         record=0;
         Payable=0;
     }
-    bool canRent() {
+    bool canRent() const {
         if (record<=-100) {
-            cout<<"Bad record.\n";
+            std::cout<<"Bad record.\n";
             return false;
         }
-        else {
-            int limit;
-            if (record>=50){
-                limit=10;
-            }
-            else if (record>=-20) limit=(record+40)/10;
-            else limit=1;
-            if (this->numberofCars>=limit) cout <<"Maximum cars rented.\n";
-                return false;
+        int limit;
+        if (record>=50){
+            limit=10;
+        }
+        else if (record>=-20) limit=(record+40)/10;
+        else limit=1;
+        if (this->numberofCars>=limit) {
+            std::cout<<"Maximum cars rented.\n";
+            return false;
         }
         if (this->Payable>=150000) {
-            cout<<"Payable limit reached.\n";
+            std::cout<<"Payable limit reached.\n";
             return false;
         }
         return true;
     }
     void rentCar(int carId, int startdate,int duedate) {
         Car car = getCar(carId);
-        if (car.ownerId=="") {
-            cout << "Car not found.\n";
+        if (car.ownerId.empty()) {
+            std::cout << "Car not found.\n";
             return;
         }
         if (!car.isAvailable(startdate)) {
-            cout << "Car is not available.\n";
+            std::cout << "Car is not available.\n";
             return;
         }
         if (!this->canRent()) {
-            cout << "Employee cannot rent more cars.\n";
+            std::cout << "Employee cannot rent more cars.\n";
             return;
         }
         car.RentRequest(id,duedate);
         this->addCar(carId);
         this->Payable += (car.dailyRate)*(duedate-startdate)*0.85;
         updateCar(car);
-        cout << "Car rented successfully.\n";
+        std::cout << "Car rented successfully.\n";
     }
     void returnCar(int carId, int current_date) {
         Car car = getCar(carId);
-        if (car.ownerId=="") {
-            cout << "Car not found.\n";
+        if (car.ownerId.empty()) {
+            std::cout << "Car not found.\n";
             return;
         }
         if (car.ownerId != this->id) {
-            cout << "Car is not rented by you.\n";
+            std::cout << "Car is not rented by you.\n";
             return;
         }
         if (car.getDueDate() < current_date) {
@@ -235,15 +232,15 @@ class employee: public User{
         else if (car.getDueDate() > current_date){
             this -> record += 10*(car.dueDate - current_date);
         }
-        car.ownerId = "M";
+        car.ownerId = AVAILABLE_OWNER;
         updateCar(car);
         this-> removeCar(carId);
-        cout << "Car returned successfully.\n";
+        std::cout << "Car returned successfully.\n";
     }
-    friend ostream& operator<<(ostream& out, const employee& emp);
-    friend istream& operator>>(istream& in, employee& emp);
+    friend std::ostream& operator<<(std::ostream& out, const Employee& emp);
+    friend std::istream& operator>>(std::istream& in, Employee& emp);
 };
-ostream& operator<<(ostream& out, const employee& emp) {
+std::ostream& operator<<(std::ostream& out, const Employee& emp) {
     out << emp.id << ' ' << emp.name << ' ' <<emp.password<<' '<< emp.position << ' ' << emp.record << ' ' << emp.Payable << ' '<<emp.numberofCars<<' ';
     for (const auto& car : emp.cars) {
         out << car << ' ';
@@ -251,7 +248,7 @@ ostream& operator<<(ostream& out, const employee& emp) {
     out << "\n";
     return out;
 }
-istream& operator>>(istream& in, employee& emp) {
+std::istream& operator>>(std::istream& in, Employee& emp) {
     in >> emp.id >> emp.name>>emp.password>>emp.position>> emp.record >> emp.Payable>>emp.numberofCars;
     int carId;
     emp.cars.clear();
@@ -271,16 +268,16 @@ istream& operator>>(istream& in, employee& emp) {
     }
     return in;
 }
-int employee::employeeNextId=0;
-class customer: public User{
+int Employee::employeeNextId=0;
+class Customer: public User{
     public:
     static int customerNextId;
     static int avgcustomerRating;
-    customer(const string& namenew, const string& passwordnew){
+    Customer(const std::string& namenew, const std::string& passwordnew){
         name=namenew;
         password=passwordnew;
         position="Customer";
-        id="C"+to_string(customerNextId++);
+        id="C"+std::to_string(customerNextId++);
         if (namenew==""||passwordnew==""){
             customerNextId--;
         }
@@ -289,52 +286,52 @@ class customer: public User{
         record=avgcustomerRating;
         Payable=0;
     }
-    bool canRent() {
+    bool canRent() const {
         if (record<=-50) {
-            cout<<"Bad record.\n";
+            std::cout<<"Bad record.\n";
             return false;
         }
-        else {
-            int limit;
-            if (record>=40){
-                limit=7;
-            }
-            else if (record>=-20) limit=(record+40)/10;
-            else limit=1;
-            if (this->numberofCars>=limit) cout <<"Maximum cars rented.\n";
-                return false;
+        int limit;
+        if (record>=40){
+            limit=7;
+        }
+        else if (record>=-20) limit=(record+40)/10;
+        else limit=1;
+        if (this->numberofCars>=limit) {
+            std::cout<<"Maximum cars rented.\n";
+            return false;
         }
         return true;
     }
     void rentCar(int carId, int startdate,int duedate) {
         Car car = getCar(carId);
-        if (car.ownerId=="") {
-            cout << "Car not found.\n";
+        if (car.ownerId.empty()) {
+            std::cout << "Car not found.\n";
             return;
         }
         
         if (!car.isAvailable(startdate)) {
-            cout << "Car is not available.\n";
+            std::cout << "Car is not available.\n";
             return;
         }
         if (!canRent()) {
-            cout << "Customer cannot rent more cars.\n";
+            std::cout << "Customer cannot rent more cars.\n";
             return;
         }
         car.RentRequest(id,duedate);
         updateCar(car);
         this->addCar(carId);
         this->Payable += (car.dailyRate)*(duedate-startdate);
-        cout << "Car rented successfully.\n";
+        std::cout << "Car rented successfully.\n";
     }
     void returnCar(int carId, int current_date) {
         Car car = getCar(carId);
-        if (car.ownerId=="") {
-            cout << "Car not found.\n";
+        if (car.ownerId.empty()) {
+            std::cout << "Car not found.\n";
             return;
         }
         if (car.ownerId != this->id) {
-            cout << "Car is not rented by you.\n";
+            std::cout << "Car is not rented by you.\n";
             return;
         }
         if (car.dueDate < current_date) {
@@ -344,18 +341,18 @@ class customer: public User{
         else if (car.dueDate > current_date){
             this->record += 10*(car.dueDate - current_date);
         }
-        car.ownerId = "M";
+        car.ownerId = AVAILABLE_OWNER;
         car.dueDate = 0;
         updateCar(car);
         this-> removeCar(carId);
-        cout << "Car returned successfully.\n";
+        std::cout << "Car returned successfully.\n";
     }
-    friend ostream& operator<<(ostream& out, const customer& cst);
-    friend istream& operator>>(istream& in, customer& cst);
+    friend std::ostream& operator<<(std::ostream& out, const Customer& cst);
+    friend std::istream& operator>>(std::istream& in, Customer& cst);
 };
-int customer::customerNextId=0;
-int customer::avgcustomerRating=0;
-ostream& operator<<(ostream& out, const customer& cst) {
+int Customer::customerNextId=0;
+int Customer::avgcustomerRating=0;
+std::ostream& operator<<(std::ostream& out, const Customer& cst) {
     out << cst.id << ' ' << cst.name << ' ' << cst.password<<' '<<cst.position << ' ' << cst.record << ' ' << cst.Payable << ' '<<cst.numberofCars<<' ';
     for (const auto& car : cst.cars) {
         out << car << ' ';
@@ -363,7 +360,7 @@ ostream& operator<<(ostream& out, const customer& cst) {
     out << "\n";
     return out;
 }
-istream& operator>>(istream& in, customer& cst) {
+std::istream& operator>>(std::istream& in, Customer& cst) {
     in >> cst.id >> cst.name>>cst.password>>cst.position>> cst.record >> cst.Payable>>cst.numberofCars;
     int carId;
     cst.cars.clear();
@@ -383,24 +380,24 @@ istream& operator>>(istream& in, customer& cst) {
     }
     return in;
 }
-vector<employee> employees;
-vector<customer> customers;
-employee getEmployee(string id){
-        for (auto i:employees){
+std::vector<Employee> employees;
+std::vector<Customer> customers;
+Employee getEmployee(const std::string& id){
+        for (auto& i:employees){
             if (i.getId()==id){
                 return i;
             }
         }
-        employee emp("","");
+        Employee emp("","");
         return emp;
     }
-customer getCustomer(string id){
+Customer getCustomer(const std::string& id){
         for (auto& i:customers){
             if (i.getId()==id){
                 return i;
             }
         }
-        customer cust("","");
+        Customer cust("","");
         return cust;
     }
 class Manager {
@@ -412,73 +409,73 @@ public:
         for (auto it = cars.begin(); it != cars.end(); ++it) {
             if (it->getId() == carId) {
                 cars.erase(it);
-                cout << "Car deleted successfully.\n";
+                std::cout << "Car deleted successfully.\n";
                 return;
             }
         }
-        cout << "Car not found.\n";
+        std::cout << "Car not found.\n";
     }
-    void displayAllCars(){
-        if (cars.size()==0){
-            cout<<"No cars found.\n";
+    void displayAllCars() const {
+        if (cars.empty()){
+            std::cout<<"No cars found.\n";
         }
-        for (auto i:cars){
+        for (const auto& i:cars){
             i.display();
         }
     }
-    void displayAllEmployees(){
-        if (employees.size()==0){
-            cout<<"No employees found.\n";
+    void displayAllEmployees() const {
+        if (employees.empty()){
+            std::cout<<"No employees found.\n";
         }
-        for (auto i:employees){
+        for (const auto& i:employees){
             i.display();
         }
     }
-    void displayAllCustomers(){
-        if (customers.size()==0){
-            cout<<"No customers found.\n";
+    void displayAllCustomers() const {
+        if (customers.empty()){
+            std::cout<<"No customers found.\n";
         }
-        for (auto i:customers){
+        for (const auto& i:customers){
             i.display();
         }
     }
-    void deleteCustomer(string id){
+    void deleteCustomer(const std::string& id){
         for (auto it = customers.begin(); it != customers.end(); ++it) {
             if (it->getId() == id) {
-                customer cust = *it;
+                Customer cust = *it;
                 for (auto& car : cust.cars) {
                     Car carobj = getCar(car);
-                    carobj.RentRequest("M",0); // Make it available for rent again
+                    carobj.RentRequest(AVAILABLE_OWNER, 0);
                     updateCar(carobj);
                 }
                 customers.erase(it);
                 return;
             }
         }
-        cout << "Customer not found.\n";
+        std::cout << "Customer not found.\n";
     }
-    void addEmployee(const employee& emp) {
+    void addEmployee(const Employee& emp) {
         employees.push_back(emp);
     }
-    void addCustomer(const customer& cust) {
+    void addCustomer(const Customer& cust) {
         customers.push_back(cust);
     }
-    void deleteEmployee(string id){
+    void deleteEmployee(const std::string& id){
         for (auto it = employees.begin(); it != employees.end(); ++it) {
             if (it->getId() == id) {
                 employees.erase(it);
                 return;
             }
         }
-        cout << "Employee not found.\n";
+        std::cout << "Employee not found.\n";
     }
-    friend class customer;
-    friend class employee;
+    friend class Customer;
+    friend class Employee;
 };
-void saveCarsToFile(const string& fileName) {
-        ofstream outFile(fileName, ios::trunc);
+void saveCarsToFile(const std::string& fileName) {
+        std::ofstream outFile(fileName, std::ios::trunc);
         if (!outFile) {
-            cerr << "Error opening file for writing.\n";
+            std::cerr << "Error opening file for writing.\n";
             return;
         }
         for (const auto& car : cars) {
@@ -486,23 +483,23 @@ void saveCarsToFile(const string& fileName) {
         }
         outFile.close();
     }
-void loadCarsFromFile(const string& fileName) {
-        ifstream inFile(fileName);
+void loadCarsFromFile(const std::string& fileName) {
+        std::ifstream inFile(fileName);
         if (!inFile) {
-            cerr << "Error opening file for reading.\n";
+            std::cerr << "Error opening file for reading.\n";
             return;
         }
         Car car;
         while (inFile >> car) {
             cars.push_back(car);
-            Car::nextId = max(Car::nextId, car.getId() + 1);
+            Car::nextId = std::max(Car::nextId, car.getId() + 1);
         }
         inFile.close();
     }
-void saveEmployeesToFile(const string& fileName) {
-        ofstream outFile(fileName, ios::trunc);
+void saveEmployeesToFile(const std::string& fileName) {
+        std::ofstream outFile(fileName, std::ios::trunc);
         if (!outFile) {
-            cerr << "Error opening file for writing.\n";
+            std::cerr << "Error opening file for writing.\n";
             return;
         }
         for (const auto& u : employees) {
@@ -510,10 +507,10 @@ void saveEmployeesToFile(const string& fileName) {
         }
         outFile.close();
     }
-void saveCustomersToFile(const string& fileName) {
-        ofstream outFile(fileName, ios::trunc);
+void saveCustomersToFile(const std::string& fileName) {
+        std::ofstream outFile(fileName, std::ios::trunc);
         if (!outFile) {
-            cerr << "Error opening file for writing.\n";
+            std::cerr << "Error opening file for writing.\n";
             return;
         }
         for (const auto& u : customers) {
@@ -521,70 +518,72 @@ void saveCustomersToFile(const string& fileName) {
         }
         outFile.close();
     }
-void loadEmployeesFromFile(const string& fileName) {
-        ifstream inFile(fileName);
+void loadEmployeesFromFile(const std::string& fileName) {
+        std::ifstream inFile(fileName);
 
         if (!inFile) {
-            cerr << "Error opening file for reading.\n";
+            std::cerr << "Error opening file for reading.\n";
             return;
         }
-        employee emp = employee("",""); // create a dummy employee to initialize the next id
+        Employee emp = Employee("","");
         while (inFile >> emp) {
             employees.push_back(emp);
-            employee::employeeNextId = max(employee::employeeNextId, stoi(emp.getId().substr(1)) + 1);
+            Employee::employeeNextId = std::max(Employee::employeeNextId, std::stoi(emp.getId().substr(1)) + 1);
         }
         inFile.close();
     }
-void loadCustomersFromFile(const string& fileName) {
-        ifstream inFile(fileName);
+void loadCustomersFromFile(const std::string& fileName) {
+        std::ifstream inFile(fileName);
         if (!inFile) {
-            cerr << "Error opening file for reading.\n";
+            std::cerr << "Error opening file for reading.\n";
             return;
         }
-        customer cust("",""); // create a dummy customer to initialize the next id
+        Customer cust("","");
         while (inFile >> cust) {
             customers.push_back(cust);
-            customer::customerNextId = max(customer::customerNextId, stoi(cust.getId().substr(1)) + 1);
-            customer::avgcustomerRating+=cust.record;
+            Customer::customerNextId = std::max(Customer::customerNextId, std::stoi(cust.getId().substr(1)) + 1);
+            Customer::avgcustomerRating+=cust.record;
         }
-        customer::avgcustomerRating/=customers.size();
+        if (!customers.empty()) {
+            Customer::avgcustomerRating/=customers.size();
+        }
 
         inFile.close();
     }
 void displayManagerchoices(){
-    cout<<"Enter your choice:\n";
-    cout<<"0. Change Password";
-    cout<<"1. Add a car\n";
-    cout<<"2. Delete a car\n";
-    cout<<"3. Display all cars\n";
-    cout<<"4. Add an employee\n";
-    cout<<"5. Delete an employee\n";
-    cout<<"6. Display all employees\n";
-    cout<<"7. Add a customer\n";
-    cout<<"8. Delete a customer\n";
-    cout<<"9. Display all customers\n";
-    cout<<"10. Update an Employee\n";
-    cout<<"11. Update a Customer\n";
-    cout<<"12. Update a Car\n";
-    cout<<"13. Exit\n";
+    std::cout<<"Enter your choice:\n";
+    std::cout<<"0. Change Password\n";
+    std::cout<<"1. Add a car\n";
+    std::cout<<"2. Delete a car\n";
+    std::cout<<"3. Display all cars\n";
+    std::cout<<"4. Add an employee\n";
+    std::cout<<"5. Delete an employee\n";
+    std::cout<<"6. Display all employees\n";
+    std::cout<<"7. Add a customer\n";
+    std::cout<<"8. Delete a customer\n";
+    std::cout<<"9. Display all customers\n";
+    std::cout<<"10. Update an Employee\n";
+    std::cout<<"11. Update a Customer\n";
+    std::cout<<"12. Update a Car\n";
+    std::cout<<"13. Exit\n";
 }
 void displayEmployeeChoices(){
-    cout<<"Enter your choice:\n";
-    cout<<"1. Rent a car\n";
-    cout<<"2. Return a car\n";
-    cout<<"3. Display all Available cars\n";
-    cout<<"4. Display all your cars\n";
-    cout<<"5. Clear due\n";
-    cout<<"7. Exit\n";
+    std::cout<<"Enter your choice:\n";
+    std::cout<<"1. Rent a car\n";
+    std::cout<<"2. Return a car\n";
+    std::cout<<"3. Display all Available cars\n";
+    std::cout<<"4. Display all your cars\n";
+    std::cout<<"5. Clear due\n";
+    std::cout<<"7. Exit\n";
 }
 void displayCustomerChoices(){
-    cout<<"Enter your choice:\n";
-    cout<<"1. Rent a car\n";
-    cout<<"2. Return a car\n";
-    cout<<"3. Display all cars\n";
-    cout<<"4. Display all your cars\n";
-    cout<<"5. Clear due\n";
-    cout<<"7. Exit\n";
+    std::cout<<"Enter your choice:\n";
+    std::cout<<"1. Rent a car\n";
+    std::cout<<"2. Return a car\n";
+    std::cout<<"3. Display all cars\n";
+    std::cout<<"4. Display all your cars\n";
+    std::cout<<"5. Clear due\n";
+    std::cout<<"7. Exit\n";
 }
 void updateCar(Car car){
     for (auto& i:cars){
@@ -594,7 +593,7 @@ void updateCar(Car car){
         }
     }
 }
-void updateEmployee(employee emp){
+void updateEmployee(Employee emp){
     for (auto& i:employees){
         if (i.getId()==emp.getId()){
             i=emp;
@@ -602,7 +601,7 @@ void updateEmployee(employee emp){
         }
     }
 }
-void updateCustomer(customer cust){
+void updateCustomer(Customer cust){
     for (auto& i:customers){
         if (i.getId()==cust.getId()){
             i=cust;
@@ -625,288 +624,287 @@ bool isValidDate(int d){
 }
 void showAvailable(int date){
     int counter=0;
-    for (auto i:cars){
+    for (const auto& i:cars){
         if (i.isAvailable(date)){
             i.display();
             counter++;
         }
     }
     if (counter==0){
-        cout<<"No cars available at the given date. Sorry for your inconvenience!\n";
+        std::cout<<"No cars available at the given date. Sorry for your inconvenience!\n";
     }
-    cout<<endl;
+    std::cout<<std::endl;
 }
 int main() {
     Manager database;
-    string Manager_pass="Mrental001";
+    std::string Manager_pass="Mrental001";
     loadCarsFromFile("cars.txt");
     loadEmployeesFromFile("employees.txt");
     loadCustomersFromFile("customers.txt");
-    cout<<"Welcome to the car rental system.\n";
-    cout<<"Please enter your position (Manager, Employee, Customer): ";
-    string position;
-    cin>>position;
+    std::cout<<"Welcome to the car rental system.\n";
+    std::cout<<"Please enter your position (Manager, Employee, Customer): ";
+    std::string position;
+    std::cin>>position;
     if (position=="Manager"){
-        cout<<"Please enter the password: ";
-        string pass;
-        cin>>pass;
+        std::cout<<"Please enter the password: ";
+        std::string pass;
+        std::cin>>pass;
         int counter=0;
         while (pass!=Manager_pass){
-            cout<<"Incorrect password.\n";
+            std::cout<<"Incorrect password.\n";
             counter++;
             if (counter>=3){
-                cout<<"Too many incorrect attempts.\n";
+                std::cout<<"Too many incorrect attempts.\n";
                 return 0;
             }
+            std::cout<<"Please enter the password again: ";
+            std::cin>>pass;
         }
-        cout<<"Welcome, Manager.\n";
+        std::cout<<"Welcome, Manager.\n";
         int choice;
         displayManagerchoices();
-        cin>>choice;
+        std::cin>>choice;
         while (choice!=13){
             if (choice==0){
-                cout<<"Enter the new password: ";
-                cin>>Manager_pass;
+                std::cout<<"Enter the new password: ";
+                std::cin>>Manager_pass;
                 while (Manager_pass.length()<8){
-                    cout<<"Password must be at least 8 characters long.\n";
-                    cout<<"Enter the password of the customer: ";
-                    cin>>Manager_pass;
+                    std::cout<<"Password must be at least 8 characters long.\n";
+                    std::cout<<"Enter the new password: ";
+                    std::cin>>Manager_pass;
                 }
-                cout<<"Password changed successfully.\n";
+                std::cout<<"Password changed successfully.\n";
             }
             if (choice==1){
-                string make,model,color,Condition;
+                std::string make,model,color,Condition;
                 int year;
                 double dailyRate;
-                cout<<"Enter the make of the car: ";
-                cin>>make;
-                cout<<"Enter the model of the car: ";
-                cin>>model;
-                cout<<"Enter the color of the car: ";
-                cin>>color;
-                cout<<"Enter the Condition of the car: (G: Good, B: Bad, D: Doable)";
-                cin>>Condition;
-                cout<<"Enter the year of the car: ";
-                cin>>year;
-                cout<<"Enter the daily rate of the car: ";
-                cin>>dailyRate;
+                std::cout<<"Enter the make of the car: ";
+                std::cin>>make;
+                std::cout<<"Enter the model of the car: ";
+                std::cin>>model;
+                std::cout<<"Enter the color of the car: ";
+                std::cin>>color;
+                std::cout<<"Enter the Condition of the car: (G: Good, B: Bad, D: Doable)";
+                std::cin>>Condition;
+                std::cout<<"Enter the year of the car: ";
+                std::cin>>year;
+                std::cout<<"Enter the daily rate of the car: ";
+                std::cin>>dailyRate;
                 Car car(make,model,color,Condition,year,dailyRate);
                 database.addCar(car);
-                cout << "Car added successfully.\n";
+                std::cout << "Car added successfully.\n";
                 
             }
             else if (choice==2){
                 int id;
-                cout<<"Enter the id of the car: ";
-                cin>>id;
+                std::cout<<"Enter the id of the car: ";
+                std::cin>>id;
                 database.deleteCar(id);
-                cout << "Car deleted successfully.\n";
             }
             else if (choice==3){
                 database.displayAllCars();
             }
             else if (choice==4){
-                string name,pass;
-                cout<<"Enter the name of the employee: ";
-                cin>>name;
-                cout<<"Enter the password of the employee: ";
-                cin>>pass;
+                std::string name,pass;
+                std::cout<<"Enter the name of the employee: ";
+                std::cin>>name;
+                std::cout<<"Enter the password of the employee: ";
+                std::cin>>pass;
                 while (pass.length()<8){
-                    cout<<"Password must be at least 8 characters long.\n";
-                    cout<<"Enter the password of the customer: ";
-                    cin>>pass;
+                    std::cout<<"Password must be at least 8 characters long.\n";
+                    std::cout<<"Enter the password of the employee: ";
+                    std::cin>>pass;
                 }
-                employee emp(name,pass);
+                Employee emp(name,pass);
                 database.addEmployee(emp);
-                cout << "Employee added successfully.\n";
+                std::cout << "Employee added successfully.\n";
             }
             else if (choice==5){
-                string id;
-                cout<<"Enter the id of the employee: ";
-                cin>>id;
+                std::string id;
+                std::cout<<"Enter the id of the employee: ";
+                std::cin>>id;
                 database.deleteEmployee(id);
-                cout << "Employee deleted successfully.\n";
             }
             else if (choice==6){
                 database.displayAllEmployees();
             }
             else if (choice==7){
-                string name,pass;
-                cout<<"Enter the name of the customer: ";
-                cin>>name;
-                cout<<"Enter the password of the customer: ";
-                cin>>pass;
+                std::string name,pass;
+                std::cout<<"Enter the name of the customer: ";
+                std::cin>>name;
+                std::cout<<"Enter the password of the customer: ";
+                std::cin>>pass;
                 while (pass.length()<8){
-                    cout<<"Password must be at least 8 characters long.\n";
-                    cout<<"Enter the password of the customer: ";
-                    cin>>pass;
+                    std::cout<<"Password must be at least 8 characters long.\n";
+                    std::cout<<"Enter the password of the customer: ";
+                    std::cin>>pass;
                 }
-                customer cust(name,pass);
+                Customer cust(name,pass);
                 database.addCustomer(cust);
-                cout << "Customer added successfully.\n";
+                std::cout << "Customer added successfully.\n";
             }
             else if (choice==8){
-                string id;
-                cout<<"Enter the id of the customer: ";
-                cin>>id;
+                std::string id;
+                std::cout<<"Enter the id of the customer: ";
+                std::cin>>id;
                 database.deleteCustomer(id);
-                cout << "Customer deleted successfully.\n";
             }
             else if (choice==9){
                 database.displayAllCustomers();     
             }
             else if (choice==10){
-                string id;
-                cout<<"Enter the id of the employee: ";
-                cin>>id;
-                employee emp=getEmployee(id);
-                if (emp.getname()=="" && emp.getpass()==""){
-                    cout<<"Employee not found.\n";
+                std::string id;
+                std::cout<<"Enter the id of the employee: ";
+                std::cin>>id;
+                Employee emp=getEmployee(id);
+                if (emp.getname().empty() && emp.getpass().empty()){
+                    std::cout<<"Employee not found.\n";
                 }
                 else {
                 emp.display();
-                cout<<"Do you want to update the record? (Y/N): ";
+                std::cout<<"Do you want to update the record? (Y/N): ";
                 char ch;
-                cin>>ch;
+                std::cin>>ch;
                 if (ch=='Y'){
-                    cout<<"Enter the new record: ";
+                    std::cout<<"Enter the new record: ";
                     int record;
-                    cin>>record;
+                    std::cin>>record;
                     emp.record=record;
                     emp.display();
                 }
                 updateEmployee(emp);
-                cout<<"Do you want to update the payable? (Y/N): ";
-                cin>>ch;
+                std::cout<<"Do you want to update the payable? (Y/N): ";
+                std::cin>>ch;
                 if (ch=='Y'){
-                    cout<<"Enter the new payable: ";
+                    std::cout<<"Enter the new payable: ";
                     int payable;
-                    cin>>payable;
+                    std::cin>>payable;
                     emp.Payable=payable;
                     emp.display();
                 }
                 updateEmployee(emp);
-                cout<<"Do you want to remove a car? (Y/N): ";
-                cin>>ch;
+                std::cout<<"Do you want to remove a car? (Y/N): ";
+                std::cin>>ch;
                 if (ch=='Y'){
                     int carId;
-                    cout<<"Enter the id of the car: ";
-                    cin>>carId;
+                    std::cout<<"Enter the id of the car: ";
+                    std::cin>>carId;
                     emp.removeCar(carId);
                     Car car=getCar(carId);
                     if (car.getId()==-1){
-                        cout<<"Car not found.\n";
+                        std::cout<<"Car not found.\n";
                     }
-                    else car.RentRequest("M",0); // Make it available for rent again
+                    else car.RentRequest(AVAILABLE_OWNER, 0);
                     emp.display();
                 }
                 updateEmployee(emp);
-                cout<<"Do you want to add a car? (Y/N): ";
-                cin>>ch;
+                std::cout<<"Do you want to add a car? (Y/N): ";
+                std::cin>>ch;
                 if (ch=='Y'){
                     int carId;
-                    cout<<"Enter the id of the car: ";
-                    cin>>carId;
+                    std::cout<<"Enter the id of the car: ";
+                    std::cin>>carId;
                     emp.addCar(carId);
                     Car car=getCar(carId);
                     if (car.getId()==-1){
-                        cout<<"Car not found.\n";
+                        std::cout<<"Car not found.\n";
                     }
-                    else if (car.ownerId!="M"){
-                        cout<<"Car already rented.\n";
+                    else if (car.ownerId!=AVAILABLE_OWNER){
+                        std::cout<<"Car already rented.\n";
                     }
                     else {
-                        cout<<"Enter the due date: ";
+                        std::cout<<"Enter the due date: ";
                         int duedate;
-                        cin>>duedate;
+                        std::cin>>duedate;
                         while (isValidDate(duedate)==false){
-                            cout<<"Invalid date.\n";
-                            cin>>duedate;
+                            std::cout<<"Invalid date.\n";
+                            std::cin>>duedate;
                         }
                         car.RentRequest(emp.getId(),duedate);
-                    } // Make it unavailable for rent
+                    }
                     emp.display();
                 }
                 updateEmployee(emp);
                 }
             }
             else if (choice==11){
-                string id;
-                cout<<"Enter the id of the customer: ";
-                cin>>id;
-                customer cust=getCustomer(id);
-                if (cust.getname()=="" && cust.getpass()==""){
-                    cout<<"Customer not found.\n";
+                std::string id;
+                std::cout<<"Enter the id of the customer: ";
+                std::cin>>id;
+                Customer cust=getCustomer(id);
+                if (cust.getname().empty() && cust.getpass().empty()){
+                    std::cout<<"Customer not found.\n";
                 }
                 else {
                 cust.display();
-                cout<<"Do you want to update the record? (Y/N): ";
+                std::cout<<"Do you want to update the record? (Y/N): ";
                 char ch;
-                cin>>ch;
+                std::cin>>ch;
                 if (ch=='Y'){
-                    cout<<"Enter the new record: ";
+                    std::cout<<"Enter the new record: ";
                     int record;
-                    cin>>record;
+                    std::cin>>record;
                     cust.record=record;
                     cust.display();
                 }
                 updateCustomer(cust);
-                cout<<"Do you want to update the payable? (Y/N): ";
-                cin>>ch;
+                std::cout<<"Do you want to update the payable? (Y/N): ";
+                std::cin>>ch;
                 if (ch=='Y'){
-                    cout<<"Enter the new payable: ";
+                    std::cout<<"Enter the new payable: ";
                     int payable;
-                    cin>>payable;
+                    std::cin>>payable;
                     cust.Payable=payable;
                     cust.display();
                 }
                 updateCustomer(cust);
-                cout<<"Do you want to remove a car? (Y/N): ";
-                cin>>ch;
+                std::cout<<"Do you want to remove a car? (Y/N): ";
+                std::cin>>ch;
                 if (ch=='Y'){
                     int carId;
-                    cout<<"Enter the id of the car: ";
-                    cin>>carId;
+                    std::cout<<"Enter the id of the car: ";
+                    std::cin>>carId;
                     Car car=getCar(carId);
                     if (car.getId()==-1){
-                        cout<<"Car not found.\n";
+                        std::cout<<"Car not found.\n";
                     }
                     else if (car.ownerId!=cust.getId()){
-                        cout<<"Car not rented by the customer.\n";
+                        std::cout<<"Car not rented by the customer.\n";
                     }
                     else {
                     cust.removeCar(carId);
-                    car.RentRequest("M",0);
-                    } // Make it available for rent again
+                    car.RentRequest(AVAILABLE_OWNER, 0);
+                    }
                     cust.display();
                 }
                 updateCustomer(cust);
-                cout<<"Do you want to add a car? (Y/N): ";
-                cin>>ch;
+                std::cout<<"Do you want to add a car? (Y/N): ";
+                std::cin>>ch;
                 if (ch=='Y'){
                     int carId;
-                    cout<<"Enter the id of the car: ";
-                    cin>>carId;
+                    std::cout<<"Enter the id of the car: ";
+                    std::cin>>carId;
                     cust.addCar(carId);
                     Car car=getCar(carId);
                     if (car.getId()==-1){
-                        cout<<"Car not found.\n";
+                        std::cout<<"Car not found.\n";
                     }
                     else {
-                        if (car.ownerId!="M"){
-                            cout<<"Car already rented.\n";
+                        if (car.ownerId!=AVAILABLE_OWNER){
+                            std::cout<<"Car already rented.\n";
                         }
                         else {
-                        cout<<"Enter the due date: ";
+                        std::cout<<"Enter the due date: ";
                             int duedate;
-                            cin>>duedate;
+                            std::cin>>duedate;
                             while (isValidDate(duedate)==false){
-                                cout<<"Invalid date.\n";
-                                cin>>duedate;
+                                std::cout<<"Invalid date.\n";
+                                std::cin>>duedate;
                             }
                             car.RentRequest(cust.getId(),duedate);
                         }
-                    } // Make it unavailable for rent
+                    }
                     cust.display();
                 }
                 updateCustomer(cust);
@@ -914,109 +912,109 @@ int main() {
             }
             else if (choice==12){
                 int id;
-                cout<<"Enter the id of the car: ";
-                cin>>id;
+                std::cout<<"Enter the id of the car: ";
+                std::cin>>id;
                 Car car=getCar(id);
                 if (car.getId()==-1){
-                    cout<<"Car not found.\n";
+                    std::cout<<"Car not found.\n";
                     return 0;
                 }
                 car.display();
-                cout<<"Do you want to update the due date? (Y/N): ";
+                std::cout<<"Do you want to update the due date? (Y/N): ";
                 char ch;
-                cin>>ch;
+                std::cin>>ch;
                 if (ch=='Y'){
-                    cout<<"Enter the new due date: ";
+                    std::cout<<"Enter the new due date: ";
                     int duedate;
-                    cin>>duedate;
+                    std::cin>>duedate;
                     car.setDueDate(duedate);
                     car.display();
                 }
                 updateCar(car);
-                cout << "Car updated successfully.\n";
-                cout << "Do you want to update the price? (Y/N): ";
-                cin >> ch;
+                std::cout << "Car updated successfully.\n";
+                std::cout << "Do you want to update the price? (Y/N): ";
+                std::cin >> ch;
                 if (ch == 'Y') {
-                    cout << "Enter the new daily rate: ";
+                    std::cout << "Enter the new daily rate: ";
                     double dailyRate;
-                    cin >> dailyRate;
+                    std::cin >> dailyRate;
                     car.dailyRate = dailyRate;
                     car.display();
                 }
                 updateCar(car);
 
             }
-            else cout<<"Invalid choice.\n";
+            else std::cout<<"Invalid choice.\n";
             displayManagerchoices();
-            cin>>choice;
+            std::cin>>choice;
         }
     }
     else if (position=="Employee"){
-        cout<<"Enter your id: ";
-        string id;
-        cin>>id;
-        employee emp=getEmployee(id);
-        if (emp.getname()=="" && emp.getpass()==""){
-            cout<<"Employee not found.\n";
+        std::cout<<"Enter your id: ";
+        std::string id;
+        std::cin>>id;
+        Employee emp=getEmployee(id);
+        if (emp.getname().empty() && emp.getpass().empty()){
+            std::cout<<"Employee not found.\n";
             return 0;
         }
-        cout<<"Enter your password: ";
-        string pass;
-        cin>>pass;
+        std::cout<<"Enter your password: ";
+        std::string pass;
+        std::cin>>pass;
         int counter=0;
         while (emp.checkpass(pass)==false){
-            cout<<"Incorrect password.\n";
+            std::cout<<"Incorrect password.\n";
             counter++;
             if (counter>=3){
-                cout<<"Too many incorrect attempts.\n";
+                std::cout<<"Too many incorrect attempts.\n";
                 return 0;
             }
-            cout<<"Please enter your password again:\n";
-            cin>>pass;
+            std::cout<<"Please enter your password again:\n";
+            std::cin>>pass;
         }
-        cout<<"Welcome," << emp.getname() <<".\n";
+        std::cout<<"Welcome, " << emp.getname() <<".\n";
         emp.display();
         int choice;
         displayEmployeeChoices();
-        cin>>choice;
+        std::cin>>choice;
         while (choice!=7){
             if (choice==1){
                 int carId,startdate,duedate;
-                cout<<"Enter the id of the car: ";
-                cin>>carId;
-                cout<<"Enter the start date (in YYYYMMDD format):";
-                cin>>startdate;
+                std::cout<<"Enter the id of the car: ";
+                std::cin>>carId;
+                std::cout<<"Enter the start date (in YYYYMMDD format):";
+                std::cin>>startdate;
                 while (isValidDate(startdate)==false){
-                    cout<<"Invalid date.\n";
-                    cin>>startdate;
+                    std::cout<<"Invalid date.\n";
+                    std::cin>>startdate;
                 }
-                cout<<"Enter the due date (YYYYMMDD format):";
-                cin>>duedate;
+                std::cout<<"Enter the due date (YYYYMMDD format):";
+                std::cin>>duedate;
                 while (duedate<startdate||isValidDate(duedate)==false){
-                    cout<<"Invalid date. Enter correct date\n";
-                    cin>>duedate;
+                    std::cout<<"Invalid date. Enter correct date\n";
+                    std::cin>>duedate;
                 }
                 emp.rentCar(carId,startdate,duedate);
             }
             else if (choice==2){
                 int carId,current_date;
-                cout<<"Enter the id of the car: ";
-                cin>>carId;
-                cout<<"Enter the current date(YYYYMMDD format): ";
-                cin>>current_date;
+                std::cout<<"Enter the id of the car: ";
+                std::cin>>carId;
+                std::cout<<"Enter the current date(YYYYMMDD format): ";
+                std::cin>>current_date;
                 while (isValidDate(current_date)==false){
-                    cout<<"Invalid date.\n";
-                    cin>>current_date;
+                    std::cout<<"Invalid date.\n";
+                    std::cin>>current_date;
                 }
                 emp.returnCar(carId,current_date);
             }
             else if (choice==3){
                 int date;
-                cout<<"Enter the date (YYYYMMDD format): ";
-                cin>>date;
+                std::cout<<"Enter the date (YYYYMMDD format): ";
+                std::cin>>date;
                 while (isValidDate(date)==false){
-                    cout<<"Invalid date.\n";
-                    cin>>date;
+                    std::cout<<"Invalid date.\n";
+                    std::cin>>date;
                 }
                 showAvailable(date);
             }
@@ -1028,102 +1026,102 @@ int main() {
                 emp.display();
             }
             else{
-                cout<<"Invalid choice.\n";
+                std::cout<<"Invalid choice.\n";
             }
             displayEmployeeChoices();
             emp.display();
-            cin>>choice;
+            std::cin>>choice;
             updateEmployee(emp);
         }
         
     }
     else if (position=="Customer"){
-        cout<<"Enter your id: ";
-        string id;
-        cin>>id;
-        customer cust=getCustomer(id);
-        if (cust.getname()=="" && cust.getpass()==""){
-            cout<<"Customer not found.\n";
-            cout << "Do you want to register as a new customer? (Y/N): ";
+        std::cout<<"Enter your id: ";
+        std::string id;
+        std::cin>>id;
+        Customer cust=getCustomer(id);
+        if (cust.getname().empty() && cust.getpass().empty()){
+            std::cout<<"Customer not found.\n";
+            std::cout << "Do you want to register as a new customer? (Y/N): ";
             char ch;
-            cin >> ch;
+            std::cin >> ch;
             if (ch == 'y' || ch == 'Y') {
-                cout << "Enter your name: ";
-                string name;
-                cin >> name;
-                cout << "Enter your password: ";
-                string pass;
-                cin >> pass;
+                std::cout << "Enter your name: ";
+                std::string name;
+                std::cin >> name;
+                std::cout << "Enter your password: ";
+                std::string pass;
+                std::cin >> pass;
                 while (pass.length() < 8) {
-                    cout << "Password must be at least 8 characters long.\n";
-                    cout << "Enter the password of the customer: ";
-                    cin >> pass;
+                    std::cout << "Password must be at least 8 characters long.\n";
+                    std::cout << "Enter your password: ";
+                    std::cin >> pass;
                 }
-                customer custnew(name, pass);
+                Customer custnew(name, pass);
                 database.addCustomer(custnew);
-                cout << "Customer added successfully.\n";
+                std::cout << "Customer added successfully.\n";
                 saveCustomersToFile("customers.txt");
                 cust = custnew;
             }
             else return 0;
         }
-        cout<<"Enter your password: ";
-        string pass;
-        cin>>pass;
+        std::cout<<"Enter your password: ";
+        std::string pass;
+        std::cin>>pass;
         int counter=0;
         while (cust.checkpass(pass)==false){
-            cout<<"Incorrect password.\n";
+            std::cout<<"Incorrect password.\n";
             counter++;
             if (counter>=3){
-                cout<<"Too many incorrect attempts.\n";
+                std::cout<<"Too many incorrect attempts.\n";
                 return 0;
             }
-            cout<<"Please enter your password again:\n";
-            cin>>pass;
+            std::cout<<"Please enter your password again:\n";
+            std::cin>>pass;
         }
-        cout<<"Welcome, "<<cust.getname()<<".\n";
+        std::cout<<"Welcome, "<<cust.getname()<<".\n";
         cust.display();
         int choice;
         displayCustomerChoices();
-        cin>>choice;
+        std::cin>>choice;
         while (choice!=7){
             if (choice==1){
                 int carId,startdate,duedate;
-                cout<<"Enter the id of the car: ";
-                cin>>carId;
-                cout<<"Enter the start date (in YYYYMMDD format):";
-                cin>>startdate;
+                std::cout<<"Enter the id of the car: ";
+                std::cin>>carId;
+                std::cout<<"Enter the start date (in YYYYMMDD format):";
+                std::cin>>startdate;
                 while (isValidDate(startdate)==false){
-                    cout<<"Invalid date.\n";
-                    cin>>startdate;
+                    std::cout<<"Invalid date.\n";
+                    std::cin>>startdate;
                 }
-                cout<<"Enter the due date (YYYYMMDD format):";
-                cin>>duedate;
+                std::cout<<"Enter the due date (YYYYMMDD format):";
+                std::cin>>duedate;
                 while (duedate<startdate||isValidDate(duedate)==false){
-                    cout<<"Invalid date. Enter correct date\n";
-                    cin>>duedate;
+                    std::cout<<"Invalid date. Enter correct date\n";
+                    std::cin>>duedate;
                 }
                 cust.rentCar(carId,startdate,duedate);
             }
             else if (choice==2){
                 int carId,current_date;
-                cout<<"Enter the id of the car: ";
-                cin>>carId;
-                cout<<"Enter the current date: ";
-                cin>>current_date;
+                std::cout<<"Enter the id of the car: ";
+                std::cin>>carId;
+                std::cout<<"Enter the current date: ";
+                std::cin>>current_date;
                 while (isValidDate(current_date)==false){
-                    cout<<"Invalid date.\n";
-                    cin>>current_date;
+                    std::cout<<"Invalid date.\n";
+                    std::cin>>current_date;
                 }
                 cust.returnCar(carId,current_date);
             }
             else if (choice==3){
                 int date;
-                cout<<"Enter the date (YYYYMMDD format): ";
-                cin>>date;
+                std::cout<<"Enter the date (YYYYMMDD format): ";
+                std::cin>>date;
                 while (isValidDate(date)==false){
-                    cout<<"Invalid date.\n";
-                    cin>>date;
+                    std::cout<<"Invalid date.\n";
+                    std::cin>>date;
                 }
                 showAvailable(date);
             }
@@ -1135,18 +1133,18 @@ int main() {
                 cust.display();
             }
             else{
-                cout<<"Invalid choice.\n";
+                std::cout<<"Invalid choice.\n";
             }
             cust.display();
             displayCustomerChoices();
-            cin>>choice;
+            std::cin>>choice;
             updateCustomer(cust);
         }
     }
-    else cout<<"Invalid position.\n";
+    else std::cout<<"Invalid position.\n";
     saveCarsToFile("cars.txt");
     saveEmployeesToFile("employees.txt");
     saveCustomersToFile("customers.txt");
-    cout<<"Thank you for using the car rental system.\n";
+    std::cout<<"Thank you for using the car rental system.\n";
     return 0;
 }
